@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPulse - Student Management System</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME SYSTEM
+       ========================================================================== */
+    :root {
+      /* Brand Palette */
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: rgba(99, 102, 241, 0.15);
+      --primary-glow: rgba(99, 102, 241, 0.35);
+
+      --accent: #d946ef;
+      --accent-light: rgba(217, 70, 239, 0.15);
+
+      /* Functional Colors */
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.15);
+      --success-text: #047857;
+
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.15);
+      --warning-text: #b45309;
+
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --danger-light: rgba(239, 68, 68, 0.15);
+      --danger-text: #b91c1c;
+
+      /* Neutral Palette (Light Mode) */
+      --bg-body: #f1f5f9;
+      --bg-surface: rgba(255, 255, 255, 0.85);
+      --bg-card: rgba(255, 255, 255, 0.7);
+      --bg-input: #ffffff;
+      --bg-subtle: #f8fafc;
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --border-color: rgba(226, 232, 240, 0.8);
+      --border-hover: #cbd5e1;
+      
+      --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+
+      /* Shape & Animations */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      /* Neutral Palette (Dark Mode) */
+      --bg-body: #090d16;
+      --bg-surface: rgba(17, 24, 39, 0.85);
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-input: #1e293b;
+      --bg-subtle: #111827;
+
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-light: #6b7280;
+
+      --border-color: rgba(51, 65, 85, 0.7);
+      --border-hover: #4b5563;
+
+      --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+      --success-text: #34d399;
+      --warning-text: #fbbf24;
+      --danger-text: #f87171;
+    }
+
+    /* ==========================================================================
+       BASE & RESET
+       ========================================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg-body);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(217, 70, 239, 0.12) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      font-size: 14px;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      overflow-x: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Glassmorphism utility */
+    .glass-panel {
+      background: var(--bg-surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: var(--radius-lg);
+    }
+
+    /* ==========================================================================
+       BUTTONS & INPUTS
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      outline: none;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #4f46e5);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--primary-glow);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      border-color: var(--border-hover);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #dc2626);
+      color: #ffffff;
+    }
+    .btn-danger:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .btn-icon:hover {
+      color: var(--text-main);
+      border-color: var(--border-hover);
+      transform: scale(1.05);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 11px 14px 11px 42px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.875rem;
+      transition: all var(--transition-fast);
+    }
+
+    .form-control.no-icon {
+      padding-left: 14px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .custom-select {
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.875rem;
+      outline: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+    .custom-select:focus {
+      border-color: var(--primary);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-active { background: var(--success-light); color: var(--success-text); }
+    .badge-inactive { background: var(--warning-light); color: var(--warning-text); }
+    .badge-graduated { background: var(--primary-light); color: var(--primary); }
+
+    /* ==========================================================================
+       AUTHENTICATION VIEWS
+       ========================================================================== */
+    .auth-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      padding: 40px;
+      animation: cardAppear 0.35s ease-out;
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .auth-footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .auth-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .auth-link:hover { text-decoration: underline; }
+
+    .top-right-toggle {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+    }
+
+    /* ==========================================================================
+       MAIN DASHBOARD LAYOUT
+       ========================================================================== */
+    .dashboard-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      height: 72px;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      border-radius: 0;
+      border-bottom: var(--glass-border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 14px 6px 8px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+    }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-size: 0.825rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+
+    .user-role {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    /* Stat Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform var(--transition-fast);
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .stat-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .icon-indigo { background: var(--primary-light); color: var(--primary); }
+    .icon-emerald { background: var(--success-light); color: var(--success); }
+    .icon-sky { background: rgba(2, 132, 199, 0.15); color: #0284c7; }
+    .icon-purple { background: var(--accent-light); color: var(--accent); }
+
+    /* Controls Toolbar */
+    .toolbar-panel {
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    /* Table Component */
+    .table-card {
+      overflow: hidden;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      padding: 16px 20px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      user-select: none;
+    }
+
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.875rem;
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr {
+      transition: background-color var(--transition-fast);
+    }
+
+    tbody tr:hover {
+      background: var(--primary-light);
+    }
+
+    .student-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .student-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .student-name {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .student-email {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      padding: 64px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: var(--text-light);
+    }
+
+    /* ==========================================================================
+       MODALS
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 540px;
+      overflow: hidden;
+      animation: modalSlide 0.25s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .modal-body { padding: 28px; }
+
+    .modal-footer {
+      padding: 18px 28px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ==========================================================================
+       TOAST NOTIFICATIONS
+       ========================================================================== */
+    .toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      backdrop-filter: blur(12px);
+      color: var(--text-main);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      min-width: 300px;
+      max-width: 420px;
+      animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .toast-icon { font-size: 1.2rem; }
+    .toast-success .toast-icon { color: var(--success); }
+    .toast-error .toast-icon { color: var(--danger); }
+    .toast-info .toast-icon { color: var(--primary); }
+
+    .toast-message {
+      font-size: 0.875rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .navbar { padding: 0 16px; }
+      .main-wrapper { padding: 16px; }
+      .toolbar-panel, .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .user-details { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- THEME SWITCHER FOR AUTH SCREENS -->
+  <div id="authThemeBtn" class="top-right-toggle">
+    <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">
+      <i class="fa-solid fa-moon" id="themeIconAuth"></i>
+    </button>
+  </div>
+
+  <!-- ==========================================================================
+       1. REGISTER VIEW
+       ========================================================================== -->
+  <div id="registerView" class="auth-wrapper">
+    <div class="glass-panel auth-card">
+      <div class="brand-header">
+        <div class="brand-logo">
+          <i class="fa-solid fa-graduation-cap"></i> EduPulse
+        </div>
+        <p class="auth-subtitle">Create an admin account to manage records</p>
+      </div>
+
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-user"></i>
+            <input type="text" id="regUsername" class="form-control" placeholder="johndoe" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="regEmail" class="form-control" placeholder="john@university.edu" required>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <select id="regRole" class="custom-select" style="width: 100%;">
+              <option value="Administrator">Administrator</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Instructor">Instructor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required minlength="6">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+          Register Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already registered? <a class="auth-link" onclick="switchAuthView('login')">Sign In</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       2. LOGIN VIEW
+       ========================================================================== -->
+  <div id="loginView" class="auth-wrapper hidden">
+    <div class="glass-panel auth-card">
+      <div class="brand-header">
+        <div class="brand-logo">
+          <i class="fa-solid fa-graduation-cap"></i> EduPulse
+        </div>
+        <p class="auth-subtitle">Sign in to access student management dashboard</p>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="loginEmail" class="form-control" placeholder="john@university.edu" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+          Sign In
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Need an account? <a class="auth-link" onclick="switchAuthView('register')">Register here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       3. DASHBOARD VIEW
+       ========================================================================== -->
+  <div id="dashboardView" class="dashboard-container hidden">
+    <!-- Top Navigation -->
+    <header class="glass-panel navbar">
+      <div class="nav-brand">
+        <i class="fa-solid fa-graduation-cap"></i> EduPulse
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIconNav"></i>
+        </button>
+
+        <div class="user-badge">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div class="user-details">
+            <span class="user-name" id="userNameDisplay">Admin User</span>
+            <span class="user-role" id="userRoleDisplay">Administrator</span>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" onclick="handleLogout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-wrapper">
+      
+      <!-- Stats Row -->
+      <section class="stats-grid">
+        <div class="glass-panel stat-card">
+          <div>
+            <div class="stat-title">Total Students</div>
+            <div class="stat-value" id="statTotal">0</div>
+          </div>
+          <div class="stat-icon icon-indigo">
+            <i class="fa-solid fa-user-graduate"></i>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div>
+            <div class="stat-title">Active Enrolled</div>
+            <div class="stat-value" id="statActive">0</div>
+          </div>
+          <div class="stat-icon icon-emerald">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div>
+            <div class="stat-title">Enrolled Courses</div>
+            <div class="stat-value" id="statCourses">0</div>
+          </div>
+          <div class="stat-icon icon-sky">
+            <i class="fa-solid fa-book"></i>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div>
+            <div class="stat-title">Average Grade</div>
+            <div class="stat-value" id="statAvgGrade">0%</div>
+          </div>
+          <div class="stat-icon icon-purple">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- Toolbar -->
+      <section class="glass-panel toolbar-panel">
+        <div class="filter-group">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by name, ID or email..." oninput="renderTable()">
+          </div>
+
+          <select id="filterCourse" class="custom-select" onchange="renderTable()">
+            <option value="ALL">All Courses</option>
+          </select>
+
+          <select id="filterStatus" class="custom-select" onchange="renderTable()">
+            <option value="ALL">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Graduated">Graduated</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary" onclick="openStudentModal()">
+          <i class="fa-solid fa-plus"></i> Add Student
+        </button>
+      </section>
+
+      <!-- Student Records Table -->
+      <section class="glass-panel table-card">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Student ID</th>
+                <th>Course</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Grade</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="empty-state hidden">
+          <i class="fa-solid fa-folder-open"></i>
+          <p>No student records matched your current query.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       4. ADD / EDIT STUDENT MODAL
+       ========================================================================== -->
+  <div id="studentModal" class="modal-backdrop hidden">
+    <div class="glass-panel modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Add New Student</h3>
+        <button class="btn-icon" onclick="closeStudentModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="studentForm" onsubmit="handleSaveStudent(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editStudentId">
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Student ID</label>
+              <input type="text" id="mStudentId" class="form-control no-icon" placeholder="STU-101" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="mName" class="form-control no-icon" placeholder="Jane Doe" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="mEmail" class="form-control no-icon" placeholder="jane@university.edu" required>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Course / Program</label>
+              <input type="text" id="mCourse" class="form-control no-icon" placeholder="Computer Science" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Grade Score (%)</label>
+              <input type="number" id="mGrade" class="form-control no-icon" placeholder="88" min="0" max="100" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Enrollment Status</label>
+            <select id="mStatus" class="custom-select" style="width: 100%;">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Graduated">Graduated</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeStudentModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       5. DELETE CONFIRMATION MODAL
+       ========================================================================== -->
+  <div id="deleteModal" class="modal-backdrop hidden">
+    <div class="glass-panel modal-box" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Delete Record</h3>
+        <button class="btn-icon" onclick="closeDeleteModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted)">
+          Are you sure you want to permanently delete <strong id="deleteTargetName" style="color: var(--text-main)"></strong>?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmDeleteStudent()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ==========================================================================
+       APPLICATION LOGIC & SCRIPT
+       ========================================================================== -->
+  <script>
+    /* Default Pre-loaded Records */
+    const PRELOADED_STUDENTS = [
+      { id: 'STU-1001', name: 'Alex Johnson', email: 'alex.j@university.edu', course: 'Computer Science', grade: 92, status: 'Active' },
+      { id: 'STU-1002', name: 'Samantha Miller', email: 's.miller@university.edu', course: 'Business Admin', grade: 85, status: 'Active' },
+      { id: 'STU-1003', name: 'David Kim', email: 'david.k@university.edu', course: 'Data Science', grade: 78, status: 'Inactive' },
+      { id: 'STU-1004', name: 'Emily Davis', email: 'e.davis@university.edu', course: 'Computer Science', grade: 96, status: 'Graduated' },
+      { id: 'STU-1005', name: 'Michael Brown', email: 'm.brown@university.edu', course: 'Cybersecurity', grade: 88, status: 'Active' }
+    ];
+
+    /* Application State */
+    let users = JSON.parse(localStorage.getItem('sms_users')) || [];
+    let students = JSON.parse(localStorage.getItem('sms_students')) || PRELOADED_STUDENTS;
+    let currentUser = JSON.parse(localStorage.getItem('sms_session')) || null;
+    let targetDeleteId = null;
+
+    // Seed initial data to storage
+    if (!localStorage.getItem('sms_students')) {
+      localStorage.setItem('sms_students', JSON.stringify(students));
+    }
+
+    /* Lifecycle Initialization */
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      routeScreen();
+    });
+
+    function routeScreen() {
+      const authThemeBtn = document.getElementById('authThemeBtn');
+
+      if (currentUser) {
+        document.getElementById('registerView').classList.add('hidden');
+        document.getElementById('loginView').classList.add('hidden');
+        document.getElementById('dashboardView').classList.remove('hidden');
+        authThemeBtn.classList.add('hidden');
+
+        // Populate User Info
+        document.getElementById('userNameDisplay').textContent = currentUser.username;
+        document.getElementById('userRoleDisplay').textContent = currentUser.role;
+        document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+
+        populateCourseFilter();
+        renderTable();
+        updateMetrics();
+      } else {
+        document.getElementById('dashboardView').classList.add('hidden');
+        authThemeBtn.classList.remove('hidden');
+
+        if (users.length > 0) {
+          switchAuthView('login');
+        } else {
+          switchAuthView('register');
+        }
+      }
+    }
+
+    function switchAuthView(view) {
+      if (view === 'login') {
+        document.getElementById('registerView').classList.add('hidden');
+        document.getElementById('loginView').classList.remove('hidden');
+      } else {
+        document.getElementById('loginView').classList.add('hidden');
+        document.getElementById('registerView').classList.remove('hidden');
+      }
+    }
+
+    /* Authentication Module */
+    function handleRegister(e) {
+      e.preventDefault();
+      const username = document.getElementById('regUsername').value.trim();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const role = document.getElementById('regRole').value;
+      const password = document.getElementById('regPassword').value;
+
+      if (users.some(u => u.email === email)) {
+        showToast('An account with this email already exists!', 'error');
+        return;
+      }
+
+      const newUser = { username, email, role, password };
+      users.push(newUser);
+      localStorage.setItem('sms_users', JSON.stringify(users));
+
+      showToast('Account registered successfully! Please log in.', 'success');
+      document.getElementById('registerForm').reset();
+      switchAuthView('login');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const password = document.getElementById('loginPassword').value;
+
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        currentUser = { username: user.username, email: user.email, role: user.role };
+        localStorage.setItem('sms_session', JSON.stringify(currentUser));
+        showToast(`Welcome back, ${user.username}!`, 'success');
+        document.getElementById('loginForm').reset();
+        routeScreen();
+      } else {
+        showToast('Invalid email or password credentials.', 'error');
+      }
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('sms_session');
+      showToast('Logged out successfully.', 'info');
+      routeScreen();
+    }
+
+    /* Dashboard Data Rendering */
+    function renderTable() {
+      const tbody = document.getElementById('studentTableBody');
+      const emptyState = document.getElementById('emptyState');
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const courseFilter = document.getElementById('filterCourse').value;
+      const statusFilter = document.getElementById('filterStatus').value;
+
+      tbody.innerHTML = '';
+
+      let filtered = students.filter(student => {
+        const matchesQuery = student.name.toLowerCase().includes(query) ||
+                             student.id.toLowerCase().includes(query) ||
+                             student.email.toLowerCase().includes(query);
+        const matchesCourse = courseFilter === 'ALL' || student.course === courseFilter;
+        const matchesStatus = statusFilter === 'ALL' || student.status === statusFilter;
+
+        return matchesQuery && matchesCourse && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+
+        filtered.forEach(student => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <div class="student-meta">
+                <div class="student-avatar">${student.name.charAt(0)}</div>
+                <div>
+                  <div class="student-name">${escapeHTML(student.name)}</div>
+                </div>
+              </div>
+            </td>
+            <td><strong>${escapeHTML(student.id)}</strong></td>
+            <td>${escapeHTML(student.course)}</td>
+            <td class="student-email">${escapeHTML(student.email)}</td>
+            <td>${getStatusBadge(student.status)}</td>
+            <td><strong>${student.grade}%</strong></td>
+            <td style="text-align: right;">
+              <button class="btn-icon" onclick="openStudentModal('${student.id}')" title="Edit Record">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button class="btn-icon" style="color: var(--danger);" onclick="openDeleteModal('${student.id}', '${escapeHTML(student.name)}')" title="Delete Record">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    function populateCourseFilter() {
+      const select = document.getElementById('filterCourse');
+      const courses = [...new Set(students.map(s => s.course))];
+
+      select.innerHTML = '<option value="ALL">All Courses</option>';
+      courses.forEach(course => {
+        const opt = document.createElement('option');
+        opt.value = course;
+        opt.textContent = course;
+        select.appendChild(opt);
+      });
+    }
+
+    function updateMetrics() {
+      const total = students.length;
+      const active = students.filter(s => s.status === 'Active').length;
+      const courses = new Set(students.map(s => s.course)).size;
+      const avgGrade = total > 0 ? (students.reduce((acc, curr) => acc + Number(curr.grade), 0) / total).toFixed(1) : 0;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statActive').textContent = active;
+      document.getElementById('statCourses').textContent = courses;
+      document.getElementById('statAvgGrade').textContent = `${avgGrade}%`;
+    }
+
+    /* CRUD Methods */
+    function openStudentModal(studentId = null) {
+      const modal = document.getElementById('studentModal');
+      const form = document.getElementById('studentForm');
+
+      form.reset();
+
+      if (studentId) {
+        const student = students.find(s => s.id === studentId);
+        if (!student) return;
+
+        document.getElementById('modalTitle').textContent = 'Edit Student Record';
+        document.getElementById('editStudentId').value = student.id;
+        document.getElementById('mStudentId').value = student.id;
+        document.getElementById('mStudentId').readOnly = true;
+        document.getElementById('mName').value = student.name;
+        document.getElementById('mEmail').value = student.email;
+        document.getElementById('mCourse').value = student.course;
+        document.getElementById('mGrade').value = student.grade;
+        document.getElementById('mStatus').value = student.status;
+      } else {
+        document.getElementById('modalTitle').textContent = 'Add New Student';
+        document.getElementById('editStudentId').value = '';
+        document.getElementById('mStudentId').readOnly = false;
+        document.getElementById('mStudentId').value = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeStudentModal() {
+      document.getElementById('studentModal').classList.add('hidden');
+    }
+
+    function handleSaveStudent(e) {
+      e.preventDefault();
+
+      const editId = document.getElementById('editStudentId').value;
+      const id = document.getElementById('mStudentId').value.trim();
+      const name = document.getElementById('mName').value.trim();
+      const email = document.getElementById('mEmail').value.trim();
+      const course = document.getElementById('mCourse').value.trim();
+      const grade = parseInt(document.getElementById('mGrade').value);
+      const status = document.getElementById('mStatus').value;
+
+      if (editId) {
+        const idx = students.findIndex(s => s.id === editId);
+        if (idx !== -1) {
+          students[idx] = { id, name, email, course, grade, status };
+          showToast('Student record updated successfully.', 'success');
+        }
+      } else {
+        if (students.some(s => s.id === id)) {
+          showToast('A student with this ID already exists.', 'error');
+          return;
+        }
+        students.push({ id, name, email, course, grade, status });
+        showToast('New student added successfully.', 'success');
+      }
+
+      saveData();
+      closeStudentModal();
+      populateCourseFilter();
+      renderTable();
+      updateMetrics();
+    }
+
+    function openDeleteModal(studentId, name) {
+      targetDeleteId = studentId;
+      document.getElementById('deleteTargetName').textContent = name;
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      targetDeleteId = null;
+      document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    function confirmDeleteStudent() {
+      if (!targetDeleteId) return;
+
+      students = students.filter(s => s.id !== targetDeleteId);
+      saveData();
+      closeDeleteModal();
+      showToast('Student record deleted.', 'info');
+      populateCourseFilter();
+      renderTable();
+      updateMetrics();
+    }
+
+    function saveData() {
+      localStorage.setItem('sms_students', JSON.stringify(students));
+    }
+
+    /* Theme Toggle */
+    function initTheme() {
+      const theme = localStorage.getItem('sms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeIcons(theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('sms_theme', next);
+      updateThemeIcons(next);
+    }
+
+    function updateThemeIcons(theme) {
+      const isDark = theme === 'dark';
+      const navIcon = document.getElementById('themeIconNav');
+      const authIcon = document.getElementById('themeIconAuth');
+
+      if (navIcon) navIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      if (authIcon) authIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    }
+
+    /* Helpers */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+
+      let icon = 'fa-info-circle';
+      if (type === 'success') icon = 'fa-circle-check';
+      if (type === 'error') icon = 'fa-circle-exclamation';
+
+      toast.innerHTML = `
+        <i class="fa-solid ${icon} toast-icon"></i>
+        <span class="toast-message">${escapeHTML(message)}</span>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(50px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function getStatusBadge(status) {
+      if (status === 'Active') return '<span class="badge badge-active"><i class="fa-solid fa-circle"></i> Active</span>';
+      if (status === 'Inactive') return '<span class="badge badge-inactive"><i class="fa-solid fa-circle"></i> Inactive</span>';
+      return '<span class="badge badge-graduated"><i class="fa-solid fa-graduation-cap"></i> Graduated</span>';
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+  </script>
+</body>
+</html>
